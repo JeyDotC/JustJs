@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Justjs TODOs</title>
+</head>
+<body>
+    <div id="todos"></div>
+
+    <script src="/dist/justjs.js"></script>
+    <script src="/examples/todoApp/TodoForm.js"></script>
+    <script src="/examples/todoApp/TodoList.js"></script>
+    <script src="/examples/todoApp/App.js"></script>
+    <script>
+        const {App} = todoApp;
+        document.querySelector("#todos").append(App());
+    </script>
+</body>
+</html>
