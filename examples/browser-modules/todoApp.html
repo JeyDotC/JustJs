@@ -9,12 +9,8 @@
 <body>
     <div id="todos"></div>
 
-    <script src="/dist/justjs.js"></script>
-    <script src="/examples/todoApp/TodoForm.js"></script>
-    <script src="/examples/todoApp/TodoList.js"></script>
-    <script src="/examples/todoApp/App.js"></script>
-    <script>
-        const {App} = todoApp;
+    <script type="module">
+        import {App} from "/examples/browser-modules/todoApp/App.js";
         document.querySelector("#todos").append(App());
     </script>
 </body>

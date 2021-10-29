@@ -4,7 +4,7 @@
   "description": "A rather simple HTML UI library",
   "scripts": {
     "test": "jest",
-    "browser-build": "rollup -c"
+    "build": "rollup -c"
   },
   "author": "JeyDotC",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "@babel/preset-env": "^7.15.8",
     "babel-jest": "^27.3.1",
     "jest": "^27.3.1",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-terser": "^7.0.2"
   }
 }
