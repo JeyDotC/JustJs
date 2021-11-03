@@ -167,3 +167,36 @@ test("el: Receiving a function child element should cause the element to assume 
         expect(element.children[0]).toBeInstanceOf(HTMLDivElement);
         expect(element.children[2]).toBeInstanceOf(HTMLTableElement);
     });
+
+    test("el: Receiving a function child TEXT element should cause the element to assume it is a handle to subscribe to the child element being replaced.",
+    function () {
+        // Arrange
+        let childNodeCallback = undefined;
+        const initialValue = "Initial Text";
+        const subscribeToChildNode = (callback) => {
+            childNodeCallback = callback;
+            return initialValue;
+        };
+
+        // Act
+        const element = el("div", {},
+            el("div"),
+            subscribeToChildNode,
+            el("table")
+        );
+
+        const firstChildElement = element.childNodes[1];
+
+        childNodeCallback("Replacement Text");
+
+        const currentChildElement = element.childNodes[1];
+
+        // Assert
+        expect(firstChildElement).toBeInstanceOf(Text);
+        expect(firstChildElement.data).toBe("Initial Text");
+        expect(currentChildElement).toBeInstanceOf(Text);
+        expect(currentChildElement.data).toBe("Replacement Text");
+        // Other elements should remain untouched
+        expect(element.childNodes[0]).toBeInstanceOf(HTMLDivElement);
+        expect(element.childNodes[2]).toBeInstanceOf(HTMLTableElement);
+    });

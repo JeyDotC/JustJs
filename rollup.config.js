@@ -22,6 +22,14 @@ export default {
         { src: 'src/el.js', dest: 'dist/browser' },
         { src: 'src/state.js', dest: 'dist/browser' },
         { src: 'src/html.js', dest: 'dist/browser', transform: (content) => content.toString().replace('"./el"', '"./el.js"') },
+        {
+          src: 'src/index.js',
+          dest: 'dist/browser',
+          transform: (content) => content.toString()
+            .replace('"./el"', '"./el.js"')
+            .replace('"./state"', '"./state.js"')
+            .replace('"./html"', '"./html.js"')
+        },
       ]
     })
   ],
