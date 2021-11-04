@@ -267,7 +267,7 @@ The **sideEffect** function covers these scenarios:
 1. State value needs to be transformed:
     * To a DOM subtree.
     * To an attribute value.
-2. We need to make an update responding to multiple subscriptions/state units.
+2. We need to respond to multiple subscriptions/state units.
 
 The structure of a side effect is this:
 
@@ -365,10 +365,142 @@ document.body.appendChild(Counter());
 
 ## 2. Responding to multiple subscriptions/state units.
 
+Now, let's assume we need to show a new field that accepts a number, and display the result of multiplying the given number by the current counter value. 
+
+This requires a new state unit (the multiplier) and an element that depends on changes on both, the count and the multiplier.
+
+```javascript
+import { state, sideEffect, div, strong, em, button, input } from "justjs/index.js";
+
+function OddEvenTag({ count }){
+    return count % 2 === 0 ? strong({}, "Even") : em({}, "Odd");
+}
+
+function Counter(){
+    const [getCount, setCount, subscribeToCount] = state(0);
+    // Let´s add the multiplier state.
+    const [getMultiplier, setMultiplier, subscribeToMultiplier] = state(1);
+
+    const handleButtonClick = () => setCount(getCount() + 1);
+    // Let's update the multiplier when input changes
+    const handleMultiplierChanged = (e) => setMultiplier(e.target.value);
+
+    const subscribeToOddEvenElement = sideEffect(
+        (count) => OddEvenTag({ count }),
+        subscribeToCount
+    );
+
+    // Let's create a subscriber that depends on the two states.
+    const subscribeToMultipliedValue = sideEffect(
+        // This reducer function receives two parameters: The current count and multiplier states.
+        // And returns the result of multiplying those values.
+        (count, multiplier) => count * multiplier,
+        // Here we declare that this subscriber depends these two states. 
+        // The reducer parameters will be provided in the same order in which we send the subscribes.
+        subscribeToCount,
+        subscribeToMultiplier
+    );
+
+    return div({},
+        "The count Is: ",
+        strong({}, subscribeToCount),
+        subscribeToOddEvenElement,
+        // Let's display the multiplier
+        " and Multiplied by ", subscribeToMultiplier,
+        // Let's display the multiplied value.
+        " the result is: ", subscribeToMultipliedValue
+        div({},
+            // Let's add the multiplier input:
+            input({
+                type: "number",
+                onChange: handleMultiplierChanged
+            }),
+            button({
+                onClick: handleButtonClick
+            }, "Click here to add.")
+        )
+    )
+}
+
+document.body.appendChild(Counter());
+```
+
 # The Special Attributes
 
+Most attributes provided in the first parameter of elements is treated just like regular HTML elements. But some of them are treated different in order to keep the ability of `el` to create elements easily in one line.
+
 ## On`<event>` Attributes
+
+We've seen these in previous sections. Any attribute which name starts with `on` is treated as an event listener, so, instead of setting an attribute, we invoke the element's `addEventListener` method.
+
+Examples:
+
+```javascript
+// Listen to the 'click' event
+button({
+    onClick: (e) => {}
+});
+
+// Listen to the 'submit' event
+form({
+    onsubmit: (e) => {}
+})
+```
+
 ## Function (Subscription) Attributes
+
+Just as with child elements, all attributes (except for event listeners) can receive a subscribe function, making the attribute dependent on a state unit.
+
+Example:
+
+```javascript
+const [getProgress, setProgress, subscribeToProgress] = state(0);
+
+// Let's create a <progress> element
+progress({ 
+    max: 100, 
+    // This attribute will be updated anytime we call setProgress
+    value: subscribeToProgress,
+})
+```
+
 ## Value Attribute
+
+The input value attribute is a special case, setting it with `setAttribute()` method is practically worthless, so, in order for the input element to work correctly, we set this attribute by setting the `value` property in the DOM object instead.
+
 ## Boolean Attributes
-## Focus Attribute
+
+If you set an attribute with boolean `true` or `false`, `el` will not just set the attribute, but also, if the given value is `false`, it will make sure that the attribute will not be present in the element.
+
+This is necessary for some special attributes which mere existence in the element changes its behavior (e.g. disabled).
+
+Example:
+
+```javascript
+// Let's create a disabled state
+const [getDisabled, setDisabled, subscribeToDisabled] = state(false);
+
+div({},
+    // The mere presence of 'disabled' attribute will cause the input to be disabled.
+    // The el function will remove the attribute whenever the value becomes boolean false.
+    input({type: "text", disabled: subscribeToDisabled }),
+    button({ onClick: () => setDisabled(!getDisabled()) }, "Toggle disabled.")
+)
+```
+
+## Focus Attribute (work in progress)
+
+Setting this attribute to boolean true, will cause `el` to attempt to focus the element. It will also enable it, so, use with caution when you have enable/disable logic on such element.
+
+Example:
+
+```javascript
+// Let's create a disabled state
+const [getFocus, setFocus, subscribeToFocus] = state(false);
+
+div({},
+    // Whenever focus becomes boolean true, we'll try to call .focus() on the input.
+    input({type: "text", focus: subscribeToFocus }),
+    button({ onClick: () => setFocus(true) }, "Focus on Input")
+)
+```
