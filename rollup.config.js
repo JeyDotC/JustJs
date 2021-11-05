@@ -1,5 +1,13 @@
 import copy from 'rollup-plugin-copy';
 import { terser } from 'rollup-plugin-terser';
+import { minify } from "terser";
+
+function transformImports(content) {
+  return content.toString()
+    .replace('"./el"', '"./el.js"')
+    .replace('"./state"', '"./state.js"')
+    .replace('"./html"', '"./html.js"');
+}
 
 export default {
   input: 'src/index.js',
@@ -19,17 +27,15 @@ export default {
   plugins: [
     copy({
       targets: [
-        { src: 'src/el.js', dest: 'dist/browser' },
-        { src: 'src/state.js', dest: 'dist/browser' },
-        { src: 'src/html.js', dest: 'dist/browser', transform: (content) => content.toString().replace('"./el"', '"./el.js"') },
-        {
-          src: 'src/index.js',
-          dest: 'dist/browser',
-          transform: (content) => content.toString()
-            .replace('"./el"', '"./el.js"')
-            .replace('"./state"', '"./state.js"')
-            .replace('"./html"', '"./html.js"')
+        { src: ['src/el.js', 'src/state.js', 'src/index.js', 'src/html.js'], dest: 'dist/browser', transform: transformImports },
+        // Browser-minified
+        { src: ['src/el.js', 'src/state.js', 'src/index.js', 'src/html.js'], dest: 'dist/browser-min', transform: async (content) => {
+            const importsTransformed = transformImports(content);
+            const result = await minify(importsTransformed);
+            return result.code;
+          }
         },
+        { src: "dist-README.md", rename: "README.md", dest: "dist" }
       ]
     })
   ],
