@@ -1,29 +1,66 @@
-const setScalarValue = (element, key, value) => {
-    if(key === "focus" && value === true){
+
+// Scalar value handlers
+function focus(element, key, value) {
+    const handled = key === "focus" && value === true;
+    if (handled) {
         element.removeAttribute("disabled");
         element.focus();
-        return;
     }
-    if(typeof value === "boolean" && value === false){
+    return { handled };
+}
+function removeBooleanAttributeOnFalse(element, key, value) {
+    const handled = typeof value === "boolean" && value === false;
+    if (handled) {
         element.removeAttribute(key);
-        return;
     }
-    if(key === "value"){
+    return { handled };
+}
+function invokeValueProperty(element, key, value) {
+    const handled = key === "value";
+    if (handled) {
         element.value = value;
-        return;
     }
+    return { handled };
+}
+function setStyleFromObject(element, key, value) {
+    const handled = key === "style" && typeof value === "object";
+    if(handled){
+        Object.entries(value).forEach(([property, styleValue]) => element.style[property] = styleValue);
+    }
+    return { handled };
+}
+function setAttribute(element, key, value) {
+    const handled = true;
     element.setAttribute(key, value);
+    return { handled };
 }
 
-function normalizeNonFunctionElement(nonFunctionElement){
-    if(typeof nonFunctionElement === "object" && nonFunctionElement !== null){
+const scalarValueHandlers = [
+    focus,
+    removeBooleanAttributeOnFalse,
+    invokeValueProperty,
+    setStyleFromObject,
+    setAttribute,
+];
+
+const setScalarValue = (element, key, value) => {
+    for (const handler of scalarValueHandlers) {
+        const { handled } = handler(element, key, value);
+        if (handled) {
+            break;
+        }
+    }
+}
+
+function normalizeNonFunctionElement(nonFunctionElement) {
+    if (typeof nonFunctionElement === "object" && nonFunctionElement !== null) {
         return nonFunctionElement;
     }
 
     return document.createTextNode(nonFunctionElement);
 }
 
-function normalizeFunctionElement(functionElement){
+function normalizeFunctionElement(functionElement) {
     let element = undefined;
     element = functionElement((newElement) => {
         const normalizedNewElement = normalizeNonFunctionElement(newElement);
@@ -37,7 +74,7 @@ function normalizeFunctionElement(functionElement){
 
 function addElements(parentElement, children) {
     const elementsToAdd = children.map((e) => {
-        if(typeof e === "function"){
+        if (typeof e === "function") {
             return normalizeFunctionElement(e);
         }
 
@@ -51,7 +88,7 @@ const el = (elementName, attributes, ...children) => {
     const element = document.createElement(elementName);
     const providedAttributes = attributes || {};
     const normalizedAttributes = {
-        ...providedAttributes, 
+        ...providedAttributes,
         children: [
             ...(providedAttributes.children || []),
             ...children
@@ -66,8 +103,8 @@ const el = (elementName, attributes, ...children) => {
         }
 
         // Handle events
-        if(key.startsWith('on')){
-            if(typeof value === 'function'){
+        if (key.startsWith('on')) {
+            if (typeof value === 'function') {
                 const eventName = key.substring(2).toLowerCase();
                 element.addEventListener(eventName, value);
             }
@@ -75,15 +112,15 @@ const el = (elementName, attributes, ...children) => {
         }
 
         // Handle bound values
-        if(typeof value === "function"){
-            const initialValue = value((newValue)=> setScalarValue(element, key, newValue));
+        if (typeof value === "function") {
+            const initialValue = value((newValue) => setScalarValue(element, key, newValue));
             setScalarValue(element, key, initialValue)
             return;
         }
 
         // All other attributes
         setScalarValue(element, key, value);
-        
+
     });
 
     return element;

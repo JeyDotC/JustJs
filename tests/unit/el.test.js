@@ -72,6 +72,22 @@ test("el: Setting the input value should set the element's value property (not t
     expect(element.value).toBe("Some Value");
 });
 
+test("el: Setting the style attribute as string should update the style property", function () {
+    const element = el("div", {
+        style: "background-color: red"
+    });
+    expect(element.style.backgroundColor).toBe("red");
+});
+
+test("el: Setting the style attribute as object should update the style property", function () {
+    const element = el("div", {
+        style: {
+            backgroundColor: "red"
+        }
+    });
+    expect(element.style.backgroundColor).toBe("red");
+});
+
 test("el: Element should be able to receive children as an attribute", function () {
     const element = el("div", {
         children: [
