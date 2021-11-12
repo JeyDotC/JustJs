@@ -2,6 +2,7 @@
   "name": "justjs",
   "version": "1.0.0",
   "description": "A rather simple HTML UI library",
+  "repository": "github:JeyDotC/JustJs",
   "scripts": {
     "test": "jest",
     "build": "rollup -c"

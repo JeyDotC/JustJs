@@ -427,7 +427,7 @@ document.body.appendChild(Counter());
 
 # The Special Attributes
 
-Most attributes provided in the first parameter of elements is treated just like regular HTML elements. But some of them are treated different in order to keep the ability of `el` to create elements easily in one line.
+Most properties provided in the first parameter of elements is treated just like regular HTML attributes (set with `setAttribute`). But some of them are treated different in order to keep the ability of `el` to create elements easily in one line.
 
 ## On`<event>` Attributes
 
@@ -488,7 +488,42 @@ div({},
 )
 ```
 
-## Style Attribute
+## Compound Attributes (Work In Progress, not yet released)
+
+Some attributes can accept objects as parameters and will set the "inner" properties of such attributes from the object values. For now we only support the **style** attribute, but we're planning to add **data-** attributes as well.
+
+**IMPORTANT NOTICE:** The ability to use subscribers on compound attributes, such as style, only applies to the attribute level, that is, properties within the attribute CAN'T be set to subscribers.
+
+**BAD** Example:
+
+```javascript
+// Let's have a style property that depends on state:
+const [ getColor, setColor, subscribeToColor ] = state("red");
+
+el("div", {
+    style: {
+        // THIS WILL NOT WORK!
+        backgroundColor: subscribeToColor,
+        padding: "20px",
+    },
+});
+```
+
+**GOOD** Example:
+
+```javascript
+// Let's have a style property that depends on state:
+const [ getColor, setColor, subscribeToColor ] = state("red");
+
+el("div", {
+    style: sideEffect((backgroundColor) => ({
+        backgroundColor,
+        padding: "20px",
+    }), subscribeToColor),
+});
+```
+
+### Style Attribute
 
 The `style` attribute can accept two types of value: String or Object. When receiving a string, it will be set just as usual (with `setAttribute`), but if an object is received, `el` will map each property of the given object to one at `element.style`.
 
@@ -507,6 +542,7 @@ el("div", {
     },
 });
 ```
+
 
 ## Focus Attribute (work in progress)
 

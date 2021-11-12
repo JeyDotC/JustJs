@@ -88,6 +88,30 @@ test("el: Setting the style attribute as object should update the style property
     expect(element.style.backgroundColor).toBe("red");
 });
 
+test("el: Setting the style attribute as object should clear any previous style property", function () {
+    // Arrange
+    let updateStyleCallback = undefined;
+    const initialValue = {
+        backgroundColor: "red"
+    };
+
+    const element = el("div", {
+        style: (callback) => {
+            updateStyleCallback = callback;
+            return initialValue;
+        }
+    });
+
+    // Act
+    updateStyleCallback({
+        padding: "20px",
+    });
+
+    // Assert
+    expect(element.style.backgroundColor).toBe("");
+    expect(element.style.padding).toBe( "20px");
+});
+
 test("el: Element should be able to receive children as an attribute", function () {
     const element = el("div", {
         children: [

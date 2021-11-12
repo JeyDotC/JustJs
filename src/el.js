@@ -25,6 +25,9 @@ function invokeValueProperty(element, key, value) {
 function setStyleFromObject(element, key, value) {
     const handled = key === "style" && typeof value === "object";
     if(handled){
+        // Clear any previous style
+        element.setAttribute("style", "");
+        // Map the given object into style properties
         Object.entries(value).forEach(([property, styleValue]) => element.style[property] = styleValue);
     }
     return { handled };
