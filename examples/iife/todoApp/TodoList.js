@@ -4,7 +4,7 @@ var todoApp = todoApp || {};
     const { ul, strike, span, li, input, label, button } = justjs;
 
     exports.TodoList = function ({ todos, onTodoDoneChange }) {
-        return ul({ style: "list-style-type: none;"},
+        return ul({ style: { listStyleType: "none" } },
             ...todos.map(({ id, text, done }) => {
                 const todoId = `todo-${id}`;
                 const handleCheckboxChange = (e) => {

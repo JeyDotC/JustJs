@@ -32,6 +32,19 @@ function setStyleFromObject(element, key, value) {
     }
     return { handled };
 }
+function setDataAttributesFromObject(element, key, value){
+    const handled = key === "data" && typeof value === "object";
+    if(handled){
+        // Remove data attributes that are not present in the given object
+        for(const dataKey in element.dataset){
+            if(!value.hasOwnProperty(dataKey)){
+                delete element.dataset[dataKey];
+            }
+        }
+        Object.entries(value).forEach(([property, dataValue]) => element.dataset[property] = dataValue);
+    }
+    return { handled };
+}
 function setAttribute(element, key, value) {
     const handled = true;
     element.setAttribute(key, value);
@@ -43,6 +56,7 @@ const scalarValueHandlers = [
     removeBooleanAttributeOnFalse,
     invokeValueProperty,
     setStyleFromObject,
+    setDataAttributesFromObject,
     setAttribute,
 ];
 
