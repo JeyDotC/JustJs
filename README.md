@@ -488,6 +488,26 @@ div({},
 )
 ```
 
+## Style Attribute
+
+The `style` attribute can accept two types of value: String or Object. When receiving a string, it will be set just as usual (with `setAttribute`), but if an object is received, `el` will map each property of the given object to one at `element.style`.
+
+Example:
+
+```javascript
+// These two examples do exactly the same:
+el("div", {
+    style: "background-color: red",
+});
+
+el("div", {
+    style: {
+        // Here we use camel-case as usually recommended.
+        backgroundColor: "red"
+    },
+});
+```
+
 ## Focus Attribute (work in progress)
 
 Setting this attribute to boolean true, will cause `el` to attempt to focus the element. It will also enable it, so, use with caution when you have enable/disable logic on such element.
