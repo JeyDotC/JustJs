@@ -26,6 +26,19 @@ test("el: Create element with CSS classes", function () {
     expect([...createdClasses]).toEqual(["some-class1", "some-class2", "some-class-3"]);
 });
 
+test.each([
+    { attributes: null },
+    { attributes: undefined },
+    { attributes: function (){} },
+    { attributes: () => {} },
+    { attributes: el("div", {}, "Text 1", "Text 2") },
+    { attributes: "This is a String" },
+])("el: Create simple element with invalid attributes", function ({attributes}) {
+    const element = el("div", attributes);
+    expect(element).toBeInstanceOf(HTMLDivElement);
+    expect(element.attributes.length).toBe(0);
+});
+
 // Special Attributes
 
 // -- Boolean Attributes
@@ -119,6 +132,14 @@ test("el: Setting the style attribute as object should clear any previous style 
     expect(element.style.padding).toBe("20px");
 });
 
+test.each([
+    { style: null },
+    { style: undefined },
+])("el: Setting the style attribute to null/undefined should set style to empty", function ({style}) {
+    const element = el("div", { style });
+    expect(element.style.length).toBe(0);
+});
+
 // -- Data-* Attributes
 test("el: Setting individual data-* attributes create data-* attributes", function () {
     const element = el("div", {
@@ -184,9 +205,9 @@ test("el: Setting data-* attributes within a data property as object should clea
     // Arrange
     let updateDataCallback = undefined;
     const initialValue = {
-        attributeRed: "red",
-        attributeGreen: "green",
-        attributeBlue: "blue",
+        attributeRed: "red", // <-- Will be Updated
+        attributeGreen: "green", // <-- Will remain untouched
+        attributeBlue: "blue", // <-- Will be removed
     };
 
     const element = el("div", {
@@ -216,6 +237,14 @@ test("el: Setting data-* attributes within a data property as object should clea
     expect(element.getAttribute("data-attribute-white")).toBe("white");
     expect(element.getAttribute("data-attribute-black")).toBe("black");
     expect(element.getAttribute("data-attribute-blue")).toBe(null);
+});
+
+test.each([
+    { data: null },
+    { data: undefined },
+])("el: Setting the data attribute to null/undefined should set dataset to empty", function ({ data}) {
+    const element = el("div", { data });
+    expect(element.dataset).toMatchObject({});
 });
 
 // Child Elements

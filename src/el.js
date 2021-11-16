@@ -28,7 +28,7 @@ function setStyleFromObject(element, key, value) {
         // Clear any previous style
         element.setAttribute("style", "");
         // Map the given object into style properties
-        Object.entries(value).forEach(([property, styleValue]) => element.style[property] = styleValue);
+        Object.entries(value || {}).forEach(([property, styleValue]) => element.style[property] = styleValue);
     }
     return { handled };
 }
@@ -41,7 +41,7 @@ function setDataAttributesFromObject(element, key, value){
                 delete element.dataset[dataKey];
             }
         }
-        Object.entries(value).forEach(([property, dataValue]) => element.dataset[property] = dataValue);
+        Object.entries(value || {}).forEach(([property, dataValue]) => element.dataset[property] = dataValue);
     }
     return { handled };
 }
@@ -103,7 +103,7 @@ function addElements(parentElement, children) {
 
 const el = (elementName, attributes, ...children) => {
     const element = document.createElement(elementName);
-    const providedAttributes = attributes || {};
+    const providedAttributes = typeof attributes === "object" && attributes !== null ? attributes : {};
     const normalizedAttributes = {
         ...providedAttributes,
         children: [
