@@ -490,9 +490,57 @@ div({},
 
 ## Compound Attributes (Work In Progress, not yet released)
 
-Some attributes can accept objects as parameters and will set the "inner" properties of such attributes from the object values. For now we only support the **style** attribute, but we're planning to add **data-** attributes as well.
+Some attributes can accept objects as parameters and will set the "inner" properties of such attributes from the given object values. So far, there are just two compound properties: **style** and **data**. Let's each one.
 
-**IMPORTANT NOTICE:** The ability to use subscribers on compound attributes, such as style, only applies to the attribute level, that is, properties within the attribute CAN'T be set to subscribers.
+### Style Attribute
+
+The `style` attribute can accept two types of value: String or Object. When receiving a string, it will be set just as usual (with `setAttribute`), but if an object is received, `el` will map each property of the given object to one at `element.style`.
+
+Example:
+
+```javascript
+// These two examples do exactly the same:
+
+div({
+    style: "background-color: red",
+});
+
+div({
+    style: {
+        // Here we use camel-case as usually recommended.
+        backgroundColor: "red"
+    },
+});
+```
+
+### Data-* Attributes
+
+You can set `data-` attributes in two ways: By just setting individual properties in the element's first parameter, or by providing an object to a single **data** property.
+
+Example:
+
+```javascript
+// These two examples produce the exact same result:
+
+div({
+    "data-some-value": "Some Value",
+    "data-some-other-value": "Other Value",
+});
+
+div({
+    data: {
+        someValue: "Some Value",
+        someOtherValue: "Other Value",
+    },
+});
+```
+The **data** property is a convenient way to manage `data-` attributes all at once.
+
+## Compound Attributes and Subscribers
+
+### Subscribers don't work on attribute's properties
+
+The ability to use subscribers on compound attributes, such as **style** and **data**, only applies to the attribute level, that is, properties within the attribute CAN'T be set to subscribers.
 
 **BAD** Example:
 
@@ -500,7 +548,7 @@ Some attributes can accept objects as parameters and will set the "inner" proper
 // Let's have a style property that depends on state:
 const [ getColor, setColor, subscribeToColor ] = state("red");
 
-el("div", {
+div({
     style: {
         // THIS WILL NOT WORK!
         backgroundColor: subscribeToColor,
@@ -512,10 +560,9 @@ el("div", {
 **GOOD** Example:
 
 ```javascript
-// Let's have a style property that depends on state:
 const [ getColor, setColor, subscribeToColor ] = state("red");
 
-el("div", {
+div({
     style: sideEffect((backgroundColor) => ({
         backgroundColor,
         padding: "20px",
@@ -523,26 +570,15 @@ el("div", {
 });
 ```
 
-### Style Attribute
+### Attribute properties will be cleared upon update
 
-The `style` attribute can accept two types of value: String or Object. When receiving a string, it will be set just as usual (with `setAttribute`), but if an object is received, `el` will map each property of the given object to one at `element.style`.
+When updating a compound attribute, you'll be overriding any previous value it had.
 
-Example:
+For **style** this means that `el` will call `element.setAttribute('style', '')` to clear the `element.style` property before setting the new values.
 
-```javascript
-// These two examples do exactly the same:
-el("div", {
-    style: "background-color: red",
-});
+For **data** this means that `el` will `delete` any `data-` attribute that is not part the given object.
 
-el("div", {
-    style: {
-        // Here we use camel-case as usually recommended.
-        backgroundColor: "red"
-    },
-});
-```
-
+This design decision is aimed to make the code more predictable.
 
 ## Focus Attribute (work in progress)
 
