@@ -488,7 +488,9 @@ div({},
 )
 ```
 
-## Compound Attributes (Work In Progress, not yet released)
+## Compound Attributes
+
+> Since **1.0.1**
 
 Some attributes can accept objects as parameters and will set the "inner" properties of such attributes from the given object values. So far, there are just two compound properties: **style** and **data**. Let's each one.
 
