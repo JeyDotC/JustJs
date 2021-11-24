@@ -36,7 +36,11 @@ document.body.appendChild(Counter());
 
 # Basic Concepts
 
-Most HTML-based UIs follow this cycle: `1: Render UI` -> `2: Respond to user input` -> `3: Update State` -> `4: Update UI`  Then we go back to step **2** whenever user interacts with the UI.
+Most HTML-based UIs follow this cycle: 
+
+> **1: Render UI** -> **2: Respond to user input** -> **3: Update State** -> **4: Update UI**  
+>
+> Then we go back to step **2** whenever user interacts with the UI.
 
 The difference between one framework or the other usually lies in how they handle each step, but in essence, they all do more or less the same.
 
@@ -492,7 +496,7 @@ div({},
 
 > Since **1.0.1**
 
-Some attributes can accept objects as parameters and will set the "inner" properties of such attributes from the given object values. So far, there are just two compound properties: **style** and **data**. Let's each one.
+Some attributes can accept objects as parameters and will set the "inner" properties of such attributes from the given object values. So far, there are just two compound properties: **style** and **data**. Let's see each one.
 
 ### Style Attribute
 

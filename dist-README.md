@@ -43,7 +43,7 @@ import {state, sideEffect, div, p, h1 } from '/justjs/index.js';
 
 ## IIFE (old school, like, jQuery-level old school!)
 
-> **WARNING** Even if JustJs uses the classic IIFE way of working, the library is plagued with usage of modern JavaScript, so, no support for IE... at least not for now.
+> **WARNING** Even if JustJs uses the classic IIFE way of working, the library is plagued with modern JavaScript usage, so, no support for IE... at least not for now.
 
 To use the classic Immediately Invoked Function Expression (IIFE) way to work, all you need to do is to make either `justjs.js` or `justjs.min.js` publicly available in your server, make sure to import it before your code and take the functions you need from the globally available var `justjs`.
 
