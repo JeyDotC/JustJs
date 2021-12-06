@@ -1,6 +1,5 @@
 
-import { state, sideEffect } from "/dist/browser/state.js";
-import { div, button } from "/dist/browser/html.js";
+import { state, sideEffect, div, button } from "/dist/browser/index.js";
 import { TodoForm } from "./TodoForm.js";
 import { TodoList } from "./TodoList.js";
 

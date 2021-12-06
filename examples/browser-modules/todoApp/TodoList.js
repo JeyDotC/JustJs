@@ -1,4 +1,4 @@
-import { ul, strike, span, li, input, label } from "/dist/browser/html.js";
+import { ul, strike, span, li, input, label } from "/dist/browser/index.js";
 
 function TodoList({ todos, onTodoDoneChange }) {
     return ul({ style: { listStyleType: "none" } },

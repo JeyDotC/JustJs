@@ -1,35 +1,34 @@
 var todoApp = todoApp || {};
 
-(function (exports){
-    const {state, form, fieldset, legend, input, button} = justjs;
+(function (exports) {
+    const { state, sideEffect, form, fieldset, legend, input, button } = justjs;
 
-    exports.TodoForm = function({ onSubmit }){
+    exports.TodoForm = function ({ onSubmit }) {
         const [getText, setText, subscribeToText] = state("");
-
-        const [textIsEmpty, setTextIsEmpty, subscribeToTextIsEmpty] = state(true);
 
         const handleFormSubmit = (e) => {
             e.preventDefault();
-            
-            if(textIsEmpty()){
+
+            const value = getText();
+
+            if (value.length === 0) {
                 return;
             }
-            
-            const value = getText();
 
             onSubmit({ value });
 
-            setText("")
+            setText("");
         }
 
         const handleTextChange = (e) => {
             setText(e.target.value);
-            setTextIsEmpty(!getText());
         }
+
+        const subscribeToTextIsEmpty = sideEffect((text) => text.length === 0, subscribeToText);
 
         return form({
                 onSubmit: handleFormSubmit
-            }, 
+            },
             fieldset({}, legend({}, "Add TODO"),
                 input({
                     type: "text",
@@ -37,7 +36,7 @@ var todoApp = todoApp || {};
                     value: subscribeToText,
                     onkeyup: handleTextChange
                 }),
-                button({type: "submit", disabled: subscribeToTextIsEmpty}, "Add")
+                button({ type: "submit", disabled: subscribeToTextIsEmpty }, "Add")
             )
         );
     };

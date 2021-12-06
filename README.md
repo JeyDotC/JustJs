@@ -166,7 +166,7 @@ As you can see, in order to create a state unit, all we need to do is to call th
 * The **Setter** which allows to update the state value and also notifies the subscribers of a change in the state.
 * The **Subscribe** which allows to provide a function (subscriber) that will be invoked whenever a change in the state happens.
 
-Knowing that we can just use the setter to update the state, we could just change our click event listener so it does its job. We'll cover how to update the UI later in the next section.
+Knowing that we can use the setter to update the state, we could just change our click event listener so it does its job. We'll cover how to update the UI later in the next section.
 
 ```javascript
 //Let's import the state function.
